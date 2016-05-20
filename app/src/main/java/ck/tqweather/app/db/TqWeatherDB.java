@@ -72,9 +72,9 @@ public class TqWeatherDB {
                 province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_code")));
                 provincelist.add(province);
             } while (cursor.moveToNext());
-            if (null != cursor) {
-                cursor.close();
-            }
+        }
+        if (null != cursor) {
+            cursor.close();
         }
         return provincelist;
     }
@@ -104,7 +104,7 @@ public class TqWeatherDB {
                 city.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
                 city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
-                city.setProvinceId(cursor.getInt(cursor.getColumnIndex("provinceId")));
+                city.setProvinceId(provinceId);
                 citylist.add(city);
             } while (cursor.moveToNext());
         }
@@ -140,9 +140,9 @@ public class TqWeatherDB {
                 county.setCityId(cityId);
                 countylist.add(county);
             } while (cursor.moveToNext());
-            if (null != cursor) {
-                cursor.close();
-            }
+        }
+        if (null != cursor) {
+            cursor.close();
         }
         return countylist;
     }
