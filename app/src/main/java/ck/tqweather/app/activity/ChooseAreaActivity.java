@@ -2,8 +2,11 @@ package ck.tqweather.app.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -20,6 +23,7 @@ import ck.tqweather.app.db.TqWeatherDB;
 import ck.tqweather.app.model.City;
 import ck.tqweather.app.model.County;
 import ck.tqweather.app.model.Province;
+import ck.tqweather.app.util.HttpCallbackListener;
 import ck.tqweather.app.util.HttpUtil;
 import ck.tqweather.app.util.Utility;
 
@@ -48,6 +52,13 @@ public class ChooseAreaActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area_activity);
+        SharedPreferences sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
+        if (sp.getBoolean("city_selected", false)) {
+            Intent intent = new Intent(this, WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         lv_address = (ListView) findViewById(R.id.address_list_view);
         tv_title = (TextView) findViewById(R.id.title_text);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, datalist);
@@ -63,9 +74,16 @@ public class ChooseAreaActivity extends Activity {
                 } else if (LEVEL_CITY == currentLevel) {
                     selectedCity = citylist.get(position);
                     queryCounties();
+                } else if (LEVEL_COUNTY == currentLevel) {
+                    String countyCode = countylist.get(position).getCountyCode();
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                    intent.putExtra("county_code", countyCode);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
+        //加载省级数据
         queryProvinces();
     }
 
@@ -137,7 +155,7 @@ public class ChooseAreaActivity extends Activity {
             address = "http://www.weather.com.cn/data/list3/city.xml";
         }
         showProgressDialog();
-        HttpUtil.sendHttpRequest(address, new HttpUtil.HttpCallbackListener() {
+        HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
                 boolean result = false;
@@ -169,7 +187,7 @@ public class ChooseAreaActivity extends Activity {
             }
 
             @Override
-            public void onErroi(Exception e) {
+            public void onError(Exception e) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -186,12 +204,14 @@ public class ChooseAreaActivity extends Activity {
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("正在加载...");
             progressDialog.setCanceledOnTouchOutside(false);
+            Log.d("dialog", "dialog");
         }
     }
 
     private void closeProgressDialog() {
         if (null != progressDialog) {
             progressDialog.dismiss();
+            Log.d("dismissDialog", "dismissDialog");
         }
     }
 

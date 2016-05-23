@@ -1,11 +1,9 @@
 package ck.tqweather.app.util;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -24,7 +22,7 @@ public class HttpUtil {
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
-                    InputStream in = connection.getInputStream();
+                    InputStream in =  connection.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     StringBuilder response = new StringBuilder();
                     String line;
@@ -36,7 +34,7 @@ public class HttpUtil {
                     }
                 } catch (Exception e) {
                     if (null != listener) {
-                        listener.onErroi(e);
+                        listener.onError(e);
                     }
                 } finally {
                     if (null != connection) {
@@ -47,9 +45,4 @@ public class HttpUtil {
         }).start();
     }
 
-    public interface HttpCallbackListener {
-        void onFinish(String response);
-
-        void onErroi(Exception e);
-    }
 }
