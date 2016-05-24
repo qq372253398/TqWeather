@@ -17,6 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name="ck.tqweather.app.activity.WeatherActivity"></activity>
+
+        <service android:name=".service.AutoUpdateService"></service>
+        <receiver android:name=".receiver.AutoUpdateRecevier"></receiver>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

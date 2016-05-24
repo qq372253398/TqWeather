@@ -117,7 +117,6 @@ public class Utility {
         editor.putString("weather_desp", weatherDesp);
         editor.putString("publish_time", publishTime);
         editor.putString("current_data", sdf.format(new Date()));
-        Log.d("save", "save");
         editor.commit();
     }
 }

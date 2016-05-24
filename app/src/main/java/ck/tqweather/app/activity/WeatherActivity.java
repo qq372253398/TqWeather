@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ck.tqweather.app.R;
+import ck.tqweather.app.service.AutoUpdateService;
 import ck.tqweather.app.util.HttpCallbackListener;
 import ck.tqweather.app.util.HttpUtil;
 import ck.tqweather.app.util.Utility;
@@ -130,6 +131,8 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
         tv_current_date.setText(sp.getString("current_date", ""));
         weather_info_layout.setVisibility(View.VISIBLE);
         tv_cityname.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(WeatherActivity.this, AutoUpdateService.class);
+        startService(intent);
     }
 
     @Override
