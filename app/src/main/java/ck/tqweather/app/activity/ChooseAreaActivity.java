@@ -46,14 +46,17 @@ public class ChooseAreaActivity extends Activity {
     private ArrayAdapter<String> adapter;
     private TqWeatherDB tqWeatherDB;
     private List<String> datalist = new ArrayList<String>();
+    //判断是否是从weatheractivity中跳转过来
+    private boolean isFromWeatherActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area_activity);
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
         SharedPreferences sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
-        if (sp.getBoolean("city_selected", false)) {
+        if (sp.getBoolean("city_selected", false) && !isFromWeatherActivity) {
             Intent intent = new Intent(this, WeatherActivity.class);
             startActivity(intent);
             finish();
@@ -222,6 +225,10 @@ public class ChooseAreaActivity extends Activity {
         } else if (LEVEL_CITY == currentLevel) {
             queryProvinces();
         } else {
+            if (isFromWeatherActivity) {
+                Intent intent = new Intent(this, WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
     }

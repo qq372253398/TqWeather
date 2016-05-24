@@ -1,11 +1,13 @@
 package ck.tqweather.app.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +19,7 @@ import ck.tqweather.app.util.Utility;
 /**
  * Created by ck on 2016/5/23.
  */
-public class WeatherActivity extends Activity {
+public class WeatherActivity extends Activity implements View.OnClickListener {
 
     private LinearLayout weather_info_layout;
     private TextView tv_cityname;
@@ -26,6 +28,8 @@ public class WeatherActivity extends Activity {
     private TextView tv_temp1;
     private TextView tv_temp2;
     private TextView tv_current_date;
+    private Button btn_home;
+    private Button btn_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +42,11 @@ public class WeatherActivity extends Activity {
         tv_weather_desp = (TextView) findViewById(R.id.tv_weather_desp);
         tv_temp1 = (TextView) findViewById(R.id.tv_temp1);
         tv_temp2 = (TextView) findViewById(R.id.tv_temp2);
+        btn_home = (Button) findViewById(R.id.btn_home);
+        btn_refresh = (Button) findViewById(R.id.btn_refresh);
         tv_current_date = (TextView) findViewById(R.id.tv_current_date);
+        btn_home.setOnClickListener(this);
+        btn_refresh.setOnClickListener(this);
         String countyCode = getIntent().getStringExtra("county_code");
         if (!TextUtils.isEmpty(countyCode)) {
             //当他有县级代号时就去查天气
@@ -122,5 +130,27 @@ public class WeatherActivity extends Activity {
         tv_current_date.setText(sp.getString("current_date", ""));
         weather_info_layout.setVisibility(View.VISIBLE);
         tv_cityname.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_home:
+                Intent intent = new Intent(this, ChooseAreaActivity.class);
+                intent.putExtra("from_weather_activity", true);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.btn_refresh:
+                tv_publish.setText("同步中...");
+                SharedPreferences sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
+                String weatherCode = sp.getString("weather_code", "");
+                if (!TextUtils.isEmpty(weatherCode)) {
+                    queryWeatherInfo(weatherCode);
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
