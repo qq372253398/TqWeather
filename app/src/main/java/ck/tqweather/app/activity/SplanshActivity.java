@@ -9,7 +9,6 @@ import android.widget.LinearLayout;
 
 import ck.tqweather.app.R;
 
-import net.youmi.android.AdManager;
 
 /**
  * Created by ck on 2016/5/24.
@@ -24,9 +23,6 @@ public class SplanshActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        String appId = "a518fb5529d34ae2";
-        String appSecret = "bb55a9f4699727a7";
-        AdManager.getInstance(this).init(appId, appSecret, false);
         setContentView(R.layout.splash_activity);
         // 设置渐变动画效果
         AlphaAnimation animation = new AlphaAnimation(0.3f, 1);

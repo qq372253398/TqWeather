@@ -1,16 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ck.tqweather.app"
-    android:versionCode="2"
-    android:versionName="TQweather2.0">
+    android:versionCode="1"
+    android:versionName="TQ1.0">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name="ck.tqweather.app.activity.ChooseAreaActivity"
+            android:exported="false"
             android:label="@string/app_name">
 
             <intent-filter>
@@ -18,39 +19,26 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="ck.tqweather.app.activity.WeatherActivity"></activity>
-        <activity android:name="ck.tqweather.app.activity.SplanshActivity">
+        <activity
+            android:name="ck.tqweather.app.activity.WeatherActivity"
+            android:exported="false"></activity>
+        <activity
+            android:name="ck.tqweather.app.activity.SplanshActivity"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service android:name=".service.AutoUpdateService"></service>
-        <receiver android:name=".receiver.AutoUpdateRecevier"></receiver>
-        <activity
-            android:name="net.youmi.android.AdBrowser"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Light.NoTitleBar"></activity>
         <service
-            android:name="net.youmi.android.AdService"
+            android:name=".service.AutoUpdateService"
             android:exported="false"></service>
-        <receiver android:name="net.youmi.android.AdReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <data android:scheme="package" />
-            </intent-filter>
-        </receiver>
+        <receiver
+            android:name=".receiver.AutoUpdateRecevier"
+            android:exported="false"></receiver>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-    <meta-data
-        android:name="YOUMI_CHANNEL"
-        android:value="10190"></meta-data>
 </manifest>

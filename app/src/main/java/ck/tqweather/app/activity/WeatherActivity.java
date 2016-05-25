@@ -9,13 +9,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import net.youmi.android.banner.AdSize;
-import net.youmi.android.banner.AdView;
-import net.youmi.android.spot.SpotDialogListener;
-import net.youmi.android.spot.SpotManager;
 
 import ck.tqweather.app.R;
 import ck.tqweather.app.service.AutoUpdateService;
@@ -67,15 +62,6 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
              */
             showWeather();
         }
-        /*
-        有米广告
-         */
-        //实例化广告条
-        AdView adView = new AdView(this, AdSize.FIT_SCREEN);
-        //获取要嵌入的广告条布局
-        LinearLayout adLayout = (LinearLayout) findViewById(R.id.adLayout);
-        //将广告条加入到布局中
-        adLayout.addView(adView);
     }
 
     /*
@@ -171,21 +157,4 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        // 如果有需要，可以点击后退关闭插播广告。
-        if (!SpotManager.getInstance(this).disMiss()) {
-            // 弹出退出窗口，可以使用自定义退屏弹出和回退动画,参照demo,若不使用动画，传入-1
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        SpotManager.getInstance(this).onDestroy();
-        super.onDestroy();
-    }
-
-
 }
