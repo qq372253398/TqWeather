@@ -59,6 +59,7 @@ public class ChooseAreaActivity extends Activity {
         if (sp.getBoolean("city_selected", false) && !isFromWeatherActivity) {
             Intent intent = new Intent(this, WeatherActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             finish();
             return;
         }
@@ -82,6 +83,7 @@ public class ChooseAreaActivity extends Activity {
                     Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
                     intent.putExtra("county_code", countyCode);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                     finish();
                 }
             }
@@ -228,6 +230,7 @@ public class ChooseAreaActivity extends Activity {
             if (isFromWeatherActivity) {
                 Intent intent = new Intent(this, WeatherActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
             finish();
         }

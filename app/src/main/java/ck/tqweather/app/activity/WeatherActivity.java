@@ -143,6 +143,7 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                 Intent intent = new Intent(this, ChooseAreaActivity.class);
                 intent.putExtra("from_weather_activity", true);
                 startActivity(intent);
+                overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
                 finish();
                 break;
             case R.id.btn_refresh:

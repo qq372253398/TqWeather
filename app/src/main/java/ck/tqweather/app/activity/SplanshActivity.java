@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
 
 import ck.tqweather.app.R;
@@ -24,17 +23,14 @@ public class SplanshActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.splash_activity);
-        // 设置渐变动画效果
-        AlphaAnimation animation = new AlphaAnimation(0.3f, 1);
         ll_splash = (LinearLayout) findViewById(R.id.ll_splash);
-        ll_splash.startAnimation(animation);
         // 定义线程
         Thread thrend = new Thread() {
             public void run() {
                 // 等待三秒
                 try {
                     // sleep线程等待函数
-                    sleep(3000);
+                    sleep(1800);
                 } catch (InterruptedException e) {
 
                     e.printStackTrace();
@@ -44,6 +40,7 @@ public class SplanshActivity extends Activity {
                     Intent openMainActivity = new Intent(
                             "android.intent.action.ChooseAreaActivity");
                     startActivity(openMainActivity);
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 }
             }
         };
