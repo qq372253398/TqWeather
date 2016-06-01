@@ -8,11 +8,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
 import ck.tqweather.app.R;
+import ck.tqweather.app.adapter.galleryAdapter;
 import ck.tqweather.app.service.AutoUpdateService;
 import ck.tqweather.app.util.HttpCallbackListener;
 import ck.tqweather.app.util.HttpUtil;
@@ -25,34 +26,38 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
 
     private LinearLayout weather_info_layout;
     private TextView tv_cityname;
-    private TextView tv_publish;
-    private TextView tv_weather_desp;
-    private TextView tv_temp1;
-    private TextView tv_temp2;
-    private TextView tv_current_date;
+    private TextView tv_wendu;
+    private TextView tv_state;
+    private Gallery mygallery;
     private Button btn_home;
     private Button btn_refresh;
+    private SharedPreferences sp;
+    private SharedPreferences spf;
+    private String[] mdate;
+    private String[] mloworhigh;
+    private String[] mtype;
+    private String[] mfeng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.weather_info_activity);
+        sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
+        spf = getSharedPreferences("weatherCode", MODE_PRIVATE);
         weather_info_layout = (LinearLayout) findViewById(R.id.weather_info_layout);
         tv_cityname = (TextView) findViewById(R.id.tv_cityname);
-        tv_publish = (TextView) findViewById(R.id.tv_publish);
-        tv_weather_desp = (TextView) findViewById(R.id.tv_weather_desp);
-        tv_temp1 = (TextView) findViewById(R.id.tv_temp1);
-        tv_temp2 = (TextView) findViewById(R.id.tv_temp2);
+        tv_wendu = (TextView) findViewById(R.id.tv_wendu);
+        tv_state = (TextView) findViewById(R.id.tv_state);
+        mygallery = (Gallery) findViewById(R.id.myGallery);
         btn_home = (Button) findViewById(R.id.btn_home);
         btn_refresh = (Button) findViewById(R.id.btn_refresh);
-        tv_current_date = (TextView) findViewById(R.id.tv_current_date);
         btn_home.setOnClickListener(this);
         btn_refresh.setOnClickListener(this);
         String countyCode = getIntent().getStringExtra("county_code");
         if (!TextUtils.isEmpty(countyCode)) {
             //当他有县级代号时就去查天气
-            tv_publish.setText("同步中...");
             weather_info_layout.setVisibility(View.INVISIBLE);
             tv_cityname.setVisibility(View.INVISIBLE);
             queryWeatherCode(countyCode);
@@ -76,7 +81,8 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
    查询天气代号对应的天气
     */
     private void queryWeatherInfo(String weatherCode) {
-        String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
+        //String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
+        String address = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + weatherCode;
         queryFromServer(address, "weatherCode");
     }
 
@@ -93,6 +99,9 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                         String[] array = response.split("\\|");
                         if (null != array && 2 == array.length) {
                             String weatherCode = array[1];
+                            SharedPreferences.Editor editor = spf.edit();
+                            editor.putString("weatherCode", weatherCode);
+                            editor.commit();
                             queryWeatherInfo(weatherCode);
                         }
                     }
@@ -112,7 +121,6 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tv_publish.setText("同步失败");
                     }
                 });
             }
@@ -123,15 +131,37 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
     从sharepreferences文件中读取存储的天气信息，并显示到UI。
      */
     private void showWeather() {
-        SharedPreferences sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
-        tv_cityname.setText(sp.getString("city_name", ""));
-        tv_temp1.setText(sp.getString("temp1", ""));
-        tv_temp2.setText(sp.getString("temp2", ""));
-        tv_weather_desp.setText(sp.getString("weather_desp", ""));
-        tv_publish.setText(sp.getString("publish_time", "") + "发布");
-        tv_current_date.setText(sp.getString("current_date", ""));
+        tv_cityname.setText(sp.getString("cityName", ""));
+        tv_wendu.setText("当前温度：" + sp.getString("wendu", "") + "℃");
+        tv_state.setText("         " + sp.getString("weatherState", ""));
+        mdate = new String[]{sp.getString("yesterdaydate", "")
+                , sp.getString("date", "")
+                , sp.getString("tomorrowdate", "")
+                , sp.getString("thirddaydate", "")};
+        mloworhigh = new String[]{sp.getString("yesterdaylow", "") + "~" + sp.getString("yesterdayhigh", "")
+                , sp.getString("low", "") + "~" + sp.getString("high", "")
+                , sp.getString("tomorrowlow", "") + "~" + sp.getString("tomorrowhigh", "")
+                , sp.getString("thirddaylow", "") + "~" + sp.getString("thirddayhigh", "")};
+        mtype = new String[]{sp.getString("yesterdaytype", "")
+                , sp.getString("type", "")
+                , sp.getString("tomorrowtype", "")
+                , sp.getString("thirddaytype", "")};
+        mfeng = new String[]{sp.getString("yesterdayfengxiang", "") + ":" + sp.getString("yesterdayfengli", "")
+                , sp.getString("fengxiang", "") + ":" + sp.getString("fengli", "")
+                , sp.getString("tomorrowfengxiang", "") + ":" + sp.getString("tomorrowfengli", "")
+                , sp.getString("thirddayfengxiang", "") + ":" + sp.getString("thirddayfengli", "")};
+        mygallery.setAdapter(new galleryAdapter(WeatherActivity.this
+                , mdate
+                , mloworhigh
+                , mtype
+                , mfeng));
+        mygallery.setSelection(1);
+        mygallery.setSpacing(120);
+        mygallery.setUnselectedAlpha(150.0f);
+
         weather_info_layout.setVisibility(View.VISIBLE);
         tv_cityname.setVisibility(View.VISIBLE);
+
         Intent intent = new Intent(WeatherActivity.this, AutoUpdateService.class);
         startService(intent);
     }
@@ -147,9 +177,7 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.btn_refresh:
-                tv_publish.setText("同步中...");
-                SharedPreferences sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
-                String weatherCode = sp.getString("weather_code", "");
+                String weatherCode = spf.getString("weatherCode", "");
                 if (!TextUtils.isEmpty(weatherCode)) {
                     queryWeatherInfo(weatherCode);
                 }

@@ -42,9 +42,10 @@ public class AutoUpdateService extends Service {
 
     //更新天气信息
     private void updateWeather() {
-        SharedPreferences sp = getSharedPreferences("weatherInfo", MODE_PRIVATE);
-        String weatherCode = sp.getString("weather_code", "");
-        String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
+        SharedPreferences spf = getSharedPreferences("weatherCode", MODE_PRIVATE);
+        String weatherCode = spf.getString("weatherCode", "");
+        String address = "http://wthrcdn.etouch.cn/weather_mini?citykey=" + weatherCode;
+        //String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
         HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {

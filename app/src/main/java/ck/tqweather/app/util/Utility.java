@@ -3,14 +3,17 @@ package ck.tqweather.app.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import ck.tqweather.app.db.TqWeatherDB;
 import ck.tqweather.app.model.City;
@@ -89,14 +92,47 @@ public class Utility {
     public static void handleWeatherResponse(Context context, String response) {
         try {
             JSONObject jsonObject = new JSONObject(response);
-            JSONObject weatherInfo = jsonObject.getJSONObject("weatherinfo");
+            JSONObject weatherInfo = jsonObject.getJSONObject("data");
             String cityName = weatherInfo.getString("city");
-            String weatherCode = weatherInfo.getString("cityid");
-            String temp1 = weatherInfo.getString("temp1");
-            String temp2 = weatherInfo.getString("temp2");
-            String weatherDesp = weatherInfo.getString("weather");
-            String publishTime = weatherInfo.getString("ptime");
-            saveWeatherInfo(context, cityName, weatherCode, temp1, temp2, weatherDesp, publishTime);
+            String wendu = weatherInfo.getString("wendu");
+            String weatherState = weatherInfo.getString("ganmao");
+            JSONArray forecast = weatherInfo.getJSONArray("forecast");
+            JSONObject today = (JSONObject) forecast.opt(0);
+            String fengxiang = today.getString("fengxiang");
+            String fengli = today.getString("fengli");
+            String high = today.getString("high");
+            String type = today.getString("type");
+            String low = today.getString("low");
+            String date = today.getString("date");
+            JSONObject tomorrow = (JSONObject) forecast.opt(1);
+            String tomorrowfengxiang = tomorrow.getString("fengxiang");
+            String tomorrowfengli = tomorrow.getString("fengli");
+            String tomorrowhigh = tomorrow.getString("high");
+            String tomorrowtype = tomorrow.getString("type");
+            String tomorrowlow = tomorrow.getString("low");
+            String tomorrowdate = tomorrow.getString("date");
+
+            JSONObject thirdday = (JSONObject) forecast.opt(2);
+            String thirddayfengxiang = thirdday.getString("fengxiang");
+            String thirddayfengli = thirdday.getString("fengli");
+            String thirddayhigh = thirdday.getString("high");
+            String thirddaytype = thirdday.getString("type");
+            String thirddaylow = thirdday.getString("low");
+            String thirddaydate = thirdday.getString("date");
+
+            JSONObject yesterday = weatherInfo.getJSONObject("yesterday");
+            String yesterdayfengxiang = yesterday.getString("fx");
+            String yesterdayfengli = yesterday.getString("fl");
+            String yesterdayhigh = yesterday.getString("high");
+            String yesterdaytype = yesterday.getString("type");
+            String yesterdaylow = yesterday.getString("low");
+            String yesterdaydate = yesterday.getString("date");
+
+            saveWeatherInfo(context, cityName, wendu, weatherState, fengxiang, fengli, high, type, low, date,
+                    tomorrowhigh, tomorrowtype, tomorrowlow, tomorrowdate,
+                    thirddayhigh, thirddaytype, thirddaylow, thirddaydate,
+                    yesterdayhigh, yesterdaytype, yesterdaylow, yesterdaydate,
+                    tomorrowfengxiang, tomorrowfengli, thirddayfengxiang, thirddayfengli, yesterdayfengxiang, yesterdayfengli);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -105,19 +141,46 @@ public class Utility {
     /*
     将服务器返回的所有天气信息存储到sharedPreference
      */
-    public static void saveWeatherInfo(Context context, String cityName, String weatherCode, String temp1, String temp2, String weatherDesp, String publishTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+
+    private static void saveWeatherInfo(Context context, String cityName, String wendu, String weatherState, String fengxiang, String fengli, String high, String type, String low, String date,
+                                        String tomorrowhigh, String tomorrowtype, String tomorrowlow, String tomorrowdate,
+                                        String thirddayhigh, String thirddaytype, String thirddaylow, String thirddaydate,
+                                        String yesterdayhigh, String yesterdaytype, String yesterdaylow, String yesterdaydate,
+                                        String tomorrowfengxiang, String tomorrowfengli, String thirddayfengxiang, String thirddayfengli,
+                                        String yesterdayfengxiang, String yesterdayfengli) {
+
+
         SharedPreferences sp = context.getSharedPreferences("weatherInfo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("city_selected", true);
-        editor.putString("city_name", cityName);
-        editor.putString("weather_code", weatherCode);
-        editor.putString("temp1", temp1);
-        editor.putString("temp2", temp2);
-        editor.putString("weather_desp", weatherDesp);
-        editor.putString("publish_time", publishTime);
-        editor.putString("current_data", sdf.format(new Date()));
+        editor.putString("cityName", cityName);
+        editor.putString("wendu", wendu);
+        editor.putString("weatherState", weatherState);
+        editor.putString("fengxiang", fengxiang);
+        editor.putString("fengli", fengli);
+        editor.putString("high", high);
+        editor.putString("low", low);
+        editor.putString("type", type);
+        editor.putString("date", date);
+        editor.putString("tomorrowhigh", tomorrowhigh);
+        editor.putString("tomorrowtype", tomorrowtype);
+        editor.putString("tomorrowlow", tomorrowlow);
+        editor.putString("tomorrowdate", tomorrowdate);
+        editor.putString("thirddayhigh", thirddayhigh);
+        editor.putString("thirddaytype", thirddaytype);
+        editor.putString("thirddaylow", thirddaylow);
+        editor.putString("thirddaydate", thirddaydate);
+        editor.putString("yesterdayhigh", yesterdayhigh);
+        editor.putString("yesterdaytype", yesterdaytype);
+        editor.putString("yesterdaylow", yesterdaylow);
+        editor.putString("yesterdaydate", yesterdaydate);
+        editor.putString("tomorrowfengxiang", tomorrowfengxiang);
+        editor.putString("tomorrowfengli", tomorrowfengli);
+        editor.putString("thirddayfengxiang", thirddayfengxiang);
+        editor.putString("thirddayfengli", thirddayfengli);
+        editor.putString("yesterdayfengxiang", yesterdayfengxiang);
+        editor.putString("yesterdayfengli", yesterdayfengli);
         editor.commit();
     }
-}
 
+}
